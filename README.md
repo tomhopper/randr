@@ -1,15 +1,8 @@
----
-title: "randr"
-author: "Thomas Hopper"
-date: "August 5,2015"
-output: html_document
----
-
 # randr
 
 Provides convenience functions for generating random numbers. The main intent is to utilize expert estimations of key distribution characteristics to generate random numbers for monte carlo simulation.
 
-The function names all begin with distribution function from `base` or `VGAM` and end with an extension related to the function's operation, as `rnorm_within()` or `runif_digits()`. Currently supported are `rnorm`, `runif`, `rtriangle` and `rbeta`.
+The function names all begin with distribution function from `base` or `VGAM` and end with an extension related to the function's operation, as `rnorm_within()` or `runif_digits()`. Currently supported are `rnorm`, `runif`, `rtriangle` (via the `VGAM` package) and `rbeta`.
 
 `*_within()` generates within the given range with a `confidence_level` tolerance interval with `lower` and `upper` as the $(1 - \mathrm{confidence\_level})/2$ and $(1 + \mathrm{confidence\_level})/2$ limits, respectively.
 
@@ -66,9 +59,9 @@ safe_total_dur <- quantile(df$total, probs = c( 0.95))
 
 delivery_date <- now() + days(as.integer(safe_total_dur))
 sums <- apply(X = df, MARGIN = 2, FUN = mean)
-sprintf("Planned duration for %s: %.0f days.", letters[1:5], sums)
+sprintf("Planned duration for %s: %.0f days.", c(letters[1:4],"total"), sums)
 sprintf("Buffer length: %.0f days", safe_total_dur - mean_total_dur)
-sprintf("Delivery date: %s", format(delivery_date, "%Y-%m-%d"))
+sprintf("Delivery date: %s, %.0f days from now.", format(delivery_date, "%Y-%m-%d"), safe_total_dur)
 
 library(tidyr)
 library(ggplot2)
@@ -80,9 +73,10 @@ ggplot(df2) +
 ```
 
 ```
-[1] "Planned duration for a: 14 days." "Planned duration for b: 27 days." "Planned duration for c: 5 days." 
-[4] "Planned duration for d: 17 days." "Planned duration for e: 62 days."
-[1] "Buffer length: 13 days"
-[1] "Delivery date: 2015-10-19"
+[1] "Planned duration for a: 14 days."     "Planned duration for b: 27 days."    
+[3] "Planned duration for c: 5 days."      "Planned duration for d: 17 days."    
+[5] "Planned duration for total: 62 days."
+[1] "Buffer length: 14 days"
+[1] "Delivery date: 2015-10-20, 75 days from now."
 ```
 ![plot of durations](figs/duration-plot.png)
