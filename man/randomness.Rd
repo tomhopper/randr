@@ -26,7 +26,7 @@ randomness(x)
 if (require(random)) {
   x <- randomNumbers()
   randomness(x)
-#' }
+}
 
 # Non-random sequences
 x <- sin((1:100)/pi)
