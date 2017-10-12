@@ -7,13 +7,15 @@
 randomness(x, n_max = 5000)
 }
 \arguments{
-\item{x}{A numeric vector}
+\item{x}{A numeric vector.}
+
+\item{n_max}{A number indicating the maximum lines in x for which a \code{lag.plot()} should be generated.}
 }
 \value{
 A number indicating statistical randomness
 }
 \description{
-Runs several checks to determine if a given vector is random
+Runs several visual and statistical checks to determine if a given vector is truly random.
 }
 \examples{
 # Hopefully random distributions

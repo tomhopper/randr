@@ -1,11 +1,9 @@
-library(qcc)
-library(randtests)
-
 #' @title Tests the randomness of a numeric vector or matrix
-#' @import randtests qcc
-#' @description Runs several checks to determine if a given vector is random
-#' @param x A numeric vector
+#' @description Runs several visual and statistical checks to determine if a given vector is truly random.
+#' @param x A numeric vector.
+#' @param n_max A number indicating the maximum lines in x for which a \code{lag.plot()} should be generated.
 #' @return A number indicating statistical randomness
+#' @export
 #' @examples
 #' # Hopefully random distributions
 #' x <- runif(100)
@@ -25,13 +23,13 @@ library(randtests)
 #' x <- 1:100
 #' randomness(x)
 randomness <- function(x, n_max = 5000) {
-  if (!("numeric" %in% class(x)) & !("integer" %in% class(x)))
-    stop("Vector 'x' must be numeric or integer.")
+  if (!("numeric" %in% class(x)) & !("integer" %in% class(x)) & !("matrix" %in% class(x)))
+    stop("'x' must be numeric, integer or matrix.")
   # First, visual checks
   # Lag plot may show structure if non-random
-  if (length(x) <= n_max) plot_lag <- lag.plot(x)
+  if (length(x) <= n_max) plot_lag <- stats::lag.plot(x)
   # Random data should not show autocorrelation
-  acf(x)
+  stats::acf(as.vector(x))
   # Random data should have few violations on an x-bar control chart
   if (require(qcc) & length(x) < n_max) {
     if(length(x) > 200) qcc::qcc(x[1:100], type = "xbar.one", newdata = x[101:length(x)])
@@ -51,9 +49,9 @@ randomness <- function(x, n_max = 5000) {
     R_obs <- length(runs$lengths)
 
     if(R_bar > R_obs) {
-      result <- 2 * (pnorm(q = R_obs, mean = R_bar, sd = s_r))
+      result <- c(pvalue = 2 * (pnorm(q = R_obs, mean = R_bar, sd = s_r)))
     } else {
-      result <- 2 * (1 - pnorm(q = R_obs, mean = R_bar, sd = s_r))
+      result <- c(pvalue = 2 * (1 - pnorm(q = R_obs, mean = R_bar, sd = s_r)))
     }
   }
   return(result)

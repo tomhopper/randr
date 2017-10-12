@@ -9,7 +9,8 @@
 #' @param upper_bound (optional) numeric. The upper boundary for returned values;  no random values can be above this value.
 #' @details \code{confidence_level} indicates the confidence level of the interval \code{[lower, upper]}. For example, a high-confidence estimate might be 0.9973, or six standard deviations between \code{lower} and \code{upper}.
 #' @return numeric vector with n elements randomly distributed so that approximately \code{confidence_level} percent of values will fall between \code{lower} and \code{upper}. If an error occurs, will usually return \code{NULL} and print an error message.
-#' @import VGAM
+# @import VGAM
+#' @export
 #' @examples
 #' rtriangle_within(10)
 #' rtriangle_within(10, 12, 10, 20)
@@ -52,7 +53,8 @@ rtriangle_within <- function(n, peak = 0.5, lower = 0, upper = 1, confidence_lev
 #' @param lower (optional) numeric. The minimum value to return
 #' @param upper (optional) numeric. The maximum value to return
 #' @return numeric vector with n elements randomly distributed between lower and upper with most likely value near \code{peak}.
-#' @import VGAM
+# @import VGAM
+#' @export
 #' @examples
 #' rtriangle_between(10)
 #' rtriangle_between(10, 10, 5, 20)

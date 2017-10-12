@@ -7,6 +7,7 @@
 #' @param sigma (optional) numeric.  If \code{confidence_level = NA}, the number of standard deviations between \code{lower} and \code{upper}.
 #' @details \code{confidence_level} indicates the confidence level of the interval \code{[lower, upper]}. For example, a high-confidence estimate might be 0.9973, or six standard deviations between \code{lower} and \code{upper}.
 #' @return numeric vector with n elements randomly distributed so that approximately \code{confidence_level * 100} percent of values will fall between \code{lower} and \code{upper}. If there is a problem, will return \code{NULL} and print an error message.
+#' @export
 #' @examples
 #' rnorm_within(10)
 #' rnorm_within(10, 10, 20)
@@ -37,6 +38,7 @@ rnorm_within <- function(n, lower=0, upper=1, confidence_level = 0.90, sigma = N
 #' @param lower (optional) numeric. The minimum value to return
 #' @param upper (optional) numeric. The maximum value to return
 #' @return numeric vector with n elements randomly distributed between \code{lower} and \code{upper}. If there is a problem, will return \code{NULL} and print an error.
+#' @export
 #' @examples
 #' rnorm_between(10)
 #' rnorm_between(10, 10, 20)

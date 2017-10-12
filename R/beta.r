@@ -37,6 +37,7 @@
 #' @param sigma (optional) numeric.  If \code{confidence_level = NA}, the number of standard deviations between \code{lower} and \code{upper}.
 #' @details \code{conf.level} indicates the confidence level of the interval \code{[lower, upper]}. For example, a high-confidence estimate might be 0.9973, or six standard deviations between \code{lower} and \code{upper}.
 #' @return numeric vector with n elements randomly distributed so that approximately \code{confidence_level * 100} percent of values will fall between \code{lower} and \code{upper}. If an error occurs, will usually return \code{NULL} and print an error message.
+#' @export
 #' @examples
 #' rbeta_within(10, 5, 3, 10)
 #' rbeta_within(10, 5, 3, 10, 0.99)
@@ -73,6 +74,7 @@ rbeta_within <- function(n, mode, lower, upper, confidence_level = 0.9, sigma = 
 #' @param lower (optional) numeric. The minimum value to return
 #' @param upper (optional) numeric. The maximum value to return
 #' @return numeric vector with n elements randomly distributed between \code{lower} and \code{upper}. If an error occurs, will usually return \code{NULL} and print an error message.
+#' @export
 #' @examples
 #' rbeta_between(10, 0.3)
 #' rbeta_between(10, 10, 5, 20)

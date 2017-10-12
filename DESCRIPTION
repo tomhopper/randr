@@ -2,10 +2,22 @@ Package: randr
 Type: Package
 Title: Convenience functions for generating random numbers, intended for use with expert estimates.
 Version: 0.2.0
-Date: 2015-07-26
+Date: 2017-10-12
 Authors@R: c(person("Thomas","Hopper", email = "tomhopper@gmail.com", role = c("aut","cre")))
 Description: Provides convenience functions for generating and testing random numbers, including: between limits, within tolerance intervals and integers of a fixed number of digits.
 License: LGPL-2.1
-Imports: numbr, VGAM
+Imports: 
+  stats, 
+  numbr, 
+  VGAM, 
+  random,
+  randtests,
+  stats
+Depends: R (>= 3.1.0),
+  numbr,
+  VGAM,
+  random,
+  randtests,
+  stats
 LazyData: TRUE
 RoxygenNote: 6.0.1
