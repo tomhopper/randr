@@ -1,10 +1,10 @@
 Package: randr
 Type: Package
-Title: Convenience functions for generating random numbers, intended for use with expert estimates.
+Title: Convenience functions for generating random numbers.
 Version: 0.2.0
 Date: 2017-10-12
 Authors@R: c(person("Thomas","Hopper", email = "tomhopper@gmail.com", role = c("aut","cre")))
-Description: Provides convenience functions for generating and testing random numbers, including: between limits, within tolerance intervals and integers of a fixed number of digits.
+Description: Provides convenience functions for generating and testing random numbers, including: between limits, within tolerance intervals and integers of a fixed number of digits. Intended for use in converting expert estimates to probability distributions for quantitative risk management.
 License: LGPL-2.1
 Imports: 
   stats, 
