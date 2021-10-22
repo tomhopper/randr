@@ -39,9 +39,11 @@
 #' @return numeric vector with n elements randomly distributed so that approximately \code{confidence_level * 100} percent of values will fall between \code{lower} and \code{upper}. If an error occurs, will usually return \code{NULL} and print an error message.
 #' @export
 #' @examples
+#' \dontrun{
 #' rbeta_within(10, 5, 3, 10)
 #' rbeta_within(10, 5, 3, 10, 0.99)
 #' summary(rbeta_within(1000, 5, 3, 10))
+#' }
 rbeta_within <- function(n, mode, lower, upper, confidence_level = 0.9, sigma = NA) {
   if (!is.na(sigma) & is.na(confidence_level)) {
     confidence_level <- 2 * pnorm(sigma / 2) - 1
@@ -68,34 +70,41 @@ rbeta_within <- function(n, mode, lower, upper, confidence_level = 0.9, sigma = 
 }
 
 #' @title Beta distribution between given limits
-#' @description Returns a beta distributed vector between \code{lower} and \code{upper}.
+#' @description Returns a beta distributed vector between \code{minimum} and \code{maximum}.
 #' @param n (required) integer. The number of random numbers to generate
-#' @param mode (required) numeric. The mode, or most likely value, of the returned distribution.
-#' @param lower (optional) numeric. The minimum value to return
-#' @param upper (optional) numeric. The maximum value to return
-#' @return numeric vector with n elements randomly distributed between \code{lower} and \code{upper}. If an error occurs, will usually return \code{NULL} and print an error message.
+#' @param mode (required) numeric. The mode, or most likely value, of the returned distribution. Requires
+#'   \eqn{minimum < mode < maximum}.
+#' @param minimum (optional) numeric. The minimum value to return. Defaults to 0.
+#' @param maximum (optional) numeric. The maximum value to return. Defaults to 1
+#' @return numeric vector with n elements randomly distributed between \code{minimum} and \code{maximum}.
+#'   If an error occurs, will usually invisibly return \code{NULL} and print an error message.
 #' @export
 #' @examples
+#' \dontrun{
 #' rbeta_between(10, 0.3)
 #' rbeta_between(10, 10, 5, 20)
 #' summary(rbeta_between(1000, 10, 5, 20))
-rbeta_between <- function(n, mode, lower = 0, upper = 1) {
+#' }
+rbeta_between <- function(n, mode, minimum = 0, maximum = 1) {
   if (!missing(n) & !missing(mode)) {
-    if (mode > lower & mode < upper) {
-      if (is.numeric(n) & is.numeric(mode) & is.numeric(lower) & is.numeric(upper)) {
-        params <- .beta_parameters_between(mode, lower, upper)
+    if (mode > minimum & mode < maximum) {
+      if (is.numeric(n) & is.numeric(mode) & is.numeric(minimum) & is.numeric(maximum) &
+          !is.nan(n) & !is.nan(mode) & !is.nan(minimum) & !is.nan(maximum)) {
+        params <- .beta_parameters_between(mode = mode, lower = minimum, upper = maximum)
       } else {
         invisible(NULL)
-        stop("Arguments \'n,\' \'mode,\' \'lower\' and \'upper\' must be numeric.")
+        stop("Arguments \'n,\' \'mode,\' \'minimum\' and \'maximum\' must be numeric.")
       }
     } else {
       invisible(NULL)
-      stop("\'mode\' must be between \'lower\' and \'upper.\'")
+      stop("\'mode\' must be between \'minimum\' and \'maximum\'")
     }
   } else {
     invisible(NULL)
     stop("rbeta_between() requires the number, \'n\' and \'mode.\'")
   }
-  return(rbeta(n, shape1 = params[[1]], shape2 = params[[2]])*(params[[4]] - params[[3]])+params[[3]])
+  result <- rbeta(n, shape1 = params[["shape1"]], shape2 = params[["shape2"]])
+  result <- result * (maximum - minimum) + minimum
+  return(result)
 }
 

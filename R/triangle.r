@@ -1,21 +1,35 @@
 #' @title Triangle distribution within a defined tolerance interval
-#' @description Returns a triangle-distributed vector within the \code{confidence_level} tolerance interval defined by \code{lower} and \code{upper}.
+#' @description Returns a triangle-distributed vector within the \code{confidence_level} tolerance
+#'   interval defined by \code{lower} and \code{upper}.
 #' @param n (required) integer. The number of random numbers to generate.
 #' @param peak (optional) numeric. The location of the peak (most likely value) of the triangle distribution.
+#'   Defaults to 0.3.
 #' @param lower (optional) numeric. The lower \code{(1 - confidence_level)/2} tolerance limit.
+#'   Defaults to 0.
 #' @param upper (optional) numeric. The upper \code{(1 + confidence_level)/2} tolerance limit.
-#' @param confidence_level (optional) numeric. The confidence level at which \code{upper} and \code{lower} are entered.
-#' @param lower_bound (optional) numeric. The lower boundary for returned values;  no random values can be below this value. e.g. for processes where negative values do not make sense, \code{lower = 0}.
-#' @param upper_bound (optional) numeric. The upper boundary for returned values;  no random values can be above this value.
-#' @details \code{confidence_level} indicates the confidence level of the interval \code{[lower, upper]}. For example, a high-confidence estimate might be 0.9973, or six standard deviations between \code{lower} and \code{upper}.
-#' @return numeric vector with n elements randomly distributed so that approximately \code{confidence_level} percent of values will fall between \code{lower} and \code{upper}. If an error occurs, will usually return \code{NULL} and print an error message.
-# @import VGAM
+#'   Defaults to 1.
+#' @param confidence_level (optional) numeric. The confidence level at which \code{upper} and
+#'   \code{lower} are entered. Defaults to 0.90.
+#' @param lower_bound (optional) numeric. The lower boundary for returned values;  no random values
+#'   can be below this value. Supplied for modeling processes where negative values do not make
+#'   sense, e.g. \code{lower = 0}.
+#' @param upper_bound (optional) numeric. The upper boundary for returned values;  no random values
+#'   can be above this value.
+#' @details \code{confidence_level} indicates the confidence level of the interval \code{[lower, upper]}.
+#'   For example, a high-confidence estimate might be 0.9973, or six standard deviations between
+#'   \code{lower} and \code{upper}.
+#' @return numeric vector with n elements randomly distributed so that approximately \code{confidence_level}
+#'   percent of values will fall between \code{lower} and \code{upper}. If an error occurs, will
+#'   usually return \code{NULL} and print an error message.
+#' @importFrom VGAM rtriangle
 #' @export
 #' @examples
+#' \dontrun{
 #' rtriangle_within(10)
 #' rtriangle_within(10, 12, 10, 20)
 #' summary(rtriangle_within(10000, 12, 10, 20))
-rtriangle_within <- function(n, peak = 0.5, lower = 0, upper = 1, confidence_level = 0.90, lower_bound = -Inf, upper_bound = Inf) {
+#' }
+rtriangle_within <- function(n, peak = 0.3, lower = 0, upper = 1, confidence_level = 0.90, lower_bound = -Inf, upper_bound = Inf) {
   if (is.numeric(n) & is.numeric(lower) & is.numeric(upper) & is.numeric(confidence_level) & is.numeric(peak) & is.numeric(lower) & is.numeric(upper)) {
     if (confidence_level > 0 && confidence_level < 1) {
       y_peak_l <- 2*(peak - lower) / ((upper - lower)*(peak - lower))
@@ -46,19 +60,53 @@ rtriangle_within <- function(n, peak = 0.5, lower = 0, upper = 1, confidence_lev
   }
 }
 
-#' @title Triangle distribution between given limits (wrapper around \code{VGAM::rtriangle()})
-#' @description Returns a triangle-distributed vector between \code{lower} and \code{upper}.
-#' @param n (required) integer. The number of random numbers to generate
-#' @param peak (optional) numeric. The location of the peak (or most likely value) of the triangle distribution.
-#' @param lower (optional) numeric. The minimum value to return
-#' @param upper (optional) numeric. The maximum value to return
-#' @return numeric vector with n elements randomly distributed between lower and upper with most likely value near \code{peak}.
-# @import VGAM
+#' @title Triangle distribution between given limits
+#' @description Returns a triangle-distributed vector with values between \code{minimum} and \code{maximum}.
+#'   \code{minimum} and \code{maximum} are not guaranteed to be found in the result, i.e.
+#'   \code{max(rtriangle_between())} will not generally be equal to \code{maximum}, and
+#'   \code{min(rtriangle_between())} will likewise not usually be equal to \code{minimum}. Essentially a
+#'   wrapper around \code{VGAM::rtriangle()} for consistency in function names.
+#' @param n (required) integer. The number of random numbers to generate. Must be 2 or greater.
+#' @param peak (optional) numeric. The location of the peak (or most likely value) of the triangle
+#'   distribution. Defaults to 0.3.
+#' @param minimum (optional) numeric. The minimum value to return. Defaults to 0.
+#' @param maximum (optional) numeric. The maximum value to return. Defaults to 1.
+#' @return numeric vector with n elements randomly distributed between minimum and maximum with
+#'   most likely value near \code{peak}.
+#' @importFrom VGAM rtriangle
 #' @export
 #' @examples
+#' \dontrun{
 #' rtriangle_between(10)
 #' rtriangle_between(10, 10, 5, 20)
 #' summary(rtriangle_between(10000, 10, 5, 20))
-rtriangle_between <- function(n, peak = 0.3, lower = 0, upper = 1) {
-  return(VGAM::rtriangle(n, theta = peak, lower = lower, upper = upper))
+#' }
+rtriangle_between <- function(n, peak = 0.3, minimum = 0, maximum = 1) {
+  if(is.numeric(n) & !is.nan(n)) {
+    if(is.numeric(peak) & !is.nan(peak)) {
+      if(is.numeric(minimum) & !is.nan(minimum)){
+        if(is.numeric(maximum) & !is.nan(maximum)) {
+          if(minimum < maximum) {
+            x <- VGAM::rtriangle(n, theta = peak, lower = minimum, upper = maximum)
+          } else {
+            invisible(NULL)
+            stop("minimum must be less than maximum")
+          }
+        } else {
+          invisible(NULL)
+          stop("maximum is not numeric; please supply numeric arguments.")
+        }
+      } else {
+        invisible(NULL)
+        stop("minimum is not numeric; please supply numeric arguments.")
+      }
+    } else {
+      invisible(NULL)
+      stop("peak is not numeric; please supply numeric arguments.")
+    }
+  } else {
+    invisible(NULL)
+    stop("n is not numeric; please supply numeric arguments.")
+  }
+  return(x)
 }

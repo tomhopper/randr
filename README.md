@@ -4,11 +4,11 @@ Provides convenience functions for generating random numbers. The main intent is
 
 The function names all begin with distribution function from `base` or `VGAM` and end with an extension related to the function's operation, as `rnorm_within()` or `runif_digits()`. Currently supported are `rnorm`, `runif`, `rtriangle` (via the `VGAM` package) and `rbeta`.
 
-`*_within()` generates within the given range with a `confidence_level` tolerance interval with `lower` and `upper` as the $(1 - \mathrm{confidence\_level})/2$ and $(1 + \mathrm{confidence\_level})/2$ limits, respectively.
+`*_within()` generates within the given range with a `confidence_level` tolerance interval with `lower` and `upper` as the $(\mathrm{confidence\_level})/2$ and $(1 - \mathrm{confidence\_level})/2$ limits, respectively.
 
-`*_between()` generates random numbers between the given range, inclusive. $X \in \left[\mathrm{lower}, \mathrm{upper}\right]$.
+`*_between()` generates random numbers between the given range, such that $x \in \left[\mathrm{minimum}, \mathrm{maximum}\right]$.
 
-`runif_digits` generates a uniformly-distributed integer with length equal to the given number of digits. 
+`runif_digits` generates a vector of length $n$ of uniformly-distributed integers, each with length equal to the given number of digits. 
 
 ## Installation
 
@@ -23,7 +23,7 @@ devtools::install_github("tomhopper/randr")
 ### Generating normal distributions from max/min estimates
 
 ```{r}
-between <- rnorm_between(n = 10000, lower = 5, upper = 15)
+between <- rnorm_between(n = 10000, minimum = 5, maximum = 15)
 within <- rnorm_within(n = 10000, lower = 5, upper = 15, confidence_level = 0.8)
 within2 <- rnorm_within(n = 10000, lower = 5, upper = 15, confidence_level = 0.99)
 
@@ -80,3 +80,8 @@ ggplot(df2) +
 [1] "Delivery date: 2015-10-20, 75 days from now."
 ```
 ![plot of durations](figs/duration-plot.png)
+
+## History
+
+1.0.0
+ : Some function arguments have changed for clarity, breaking code that used the older versions. In particular, the `*_between()` functions now use `minimum` and `maximum` in place of `lower` and `upper`. `rnorm_between()` and `runif_between()` have been rewritten to produce more random results that fall between `minimum` and `maximum`. These functions also produce results that are more consisent with `rbeta_between()` and `rtriangle_between()` (`VGAM::rtriangle()`).
