@@ -19,13 +19,23 @@ rnorm_within <- function(n, lower=0, upper=1, confidence_level = 0.90, sigma = N
     confidence_level <- 2 * pnorm(sigma / 2) - 1
   }
   if (is.numeric(n) & is.numeric(lower) & is.numeric(upper) & is.numeric(confidence_level)) {
-    if (confidence_level > 0 && confidence_level < 1) {
-      mean_t <- mean(c(upper, lower))
-      sd_t <- (upper - lower) / (qnorm((1 + confidence_level)/2) - qnorm((1 - confidence_level)/2))
-      x <- rnorm(n, mean = mean_t, sd = sd_t)
+    if (length(n) == 1) {
+      if (confidence_level > 0 && confidence_level < 1) {
+        if (lower < upper) {
+          mean_t <- mean(c(upper, lower))
+          sd_t <- (upper - lower) / (qnorm((1 + confidence_level)/2) - qnorm((1 - confidence_level)/2))
+          x <- rnorm(n, mean = mean_t, sd = sd_t)
+        } else {
+          invisible(NULL)
+          stop("lower must be less than upper.")
+        }
+      } else {
+        invisible(NULL)
+        stop("confidence_level must be between 0 and 1.")
+      }
     } else {
       invisible(NULL)
-      stop("confidence_level must be between 0 and 1.")
+      stop("n must be a single value.")
     }
   } else {
     invisible(NULL)
@@ -65,32 +75,37 @@ rnorm_within <- function(n, lower=0, upper=1, confidence_level = 0.90, sigma = N
 #' randtests::runs.test(r_v)
 #' }
 rnorm_between <- function(n, minimum = 0, maximum = 1) {
-  if (is.numeric(n) & !is.nan(n)) {
-    if(is.numeric(minimum) & !is.nan(minimum)){
-      if(is.numeric(maximum) & !is.nan(maximum)) {
-        if(minimum < maximum) {
-          x <- rnorm(n = (n*6))
-          if (all(!is.nan(x))) {
-            x_max <- max(x)
-            x_min <- min(x)
-            x <- (x - x_min) / (x_max - x_min)
-            x <- x * (maximum - minimum) + minimum
-            x <- sample(x = x, size = n, replace = FALSE)
+  if (is.numeric(n) & !any(is.nan(n))) {
+    if (length(n) == 1) {
+      if(is.numeric(minimum) & !is.nan(minimum)){
+        if(is.numeric(maximum) & !is.nan(maximum)) {
+          if(minimum < maximum) {
+            x <- rnorm(n = (n*6))
+            if (all(!is.nan(x))) {
+              x_max <- max(x)
+              x_min <- min(x)
+              x <- (x - x_min) / (x_max - x_min)
+              x <- x * (maximum - minimum) + minimum
+              x <- sample(x = x, size = n, replace = FALSE)
+            } else {
+              invisible(x)
+              stop("There was a problem getting random numbers.")
+            }
           } else {
-            invisible(x)
-            stop("There was a problem getting random numbers.")
+            invisible(NULL)
+            stop("minimum must be less than maximum")
           }
         } else {
           invisible(NULL)
-          stop("minimum must be less than maximum")
+          stop("maximum is not numeric; please supply numeric arguments.")
         }
       } else {
         invisible(NULL)
-        stop("maximum is not numeric; please supply numeric arguments.")
+        stop("minimum is not numeric; please supply numeric arguments.")
       }
     } else {
       invisible(NULL)
-      stop("minimum is not numeric; please supply numeric arguments.")
+      stop("n must be a single value.")
     }
   } else {
     invisible(NULL)

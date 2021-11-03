@@ -83,5 +83,8 @@ ggplot(df2) +
 
 ## History
 
+1.0.1
+ : Improved error handling and added unit testing.
+
 1.0.0
  : Some function arguments have changed for clarity, breaking code that used the older versions. In particular, the `*_between()` functions now use `minimum` and `maximum` in place of `lower` and `upper`. `rnorm_between()` and `runif_between()` have been rewritten to produce more random results that fall between `minimum` and `maximum`. These functions also produce results that are more consisent with `rbeta_between()` and `rtriangle_between()` (`VGAM::rtriangle()`).

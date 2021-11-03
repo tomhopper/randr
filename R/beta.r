@@ -44,19 +44,34 @@
 #' rbeta_within(10, 5, 3, 10, 0.99)
 #' summary(rbeta_within(1000, 5, 3, 10))
 #' }
-rbeta_within <- function(n, mode, lower, upper, confidence_level = 0.9, sigma = NA) {
-  if (!is.na(sigma) & is.na(confidence_level)) {
-    confidence_level <- 2 * pnorm(sigma / 2) - 1
-  }
-  if (!missing(n) & !missing(mode) & !missing(lower) & !missing(upper)) {
-    if (is.numeric(n) & is.numeric(mode) & is.numeric(lower) & is.numeric(upper) & is.numeric(confidence_level)) {
-      params <- .beta_parameters_within(mode, lower, upper, confidence_level)
-    } else{
+rbeta_within <- function(n, mode = 0.3, lower = 0, upper = 1, confidence_level = 0.9, sigma = NA) {
+  if (!missing(n) && !missing(mode) && !missing(lower) && !missing(upper)) {
+    if (is.numeric(n) && is.numeric(mode) && is.numeric(lower) && is.numeric(upper) && (is.numeric(confidence_level) || is.numeric(sigma))) {
+      if (length(n) == 1 && length(mode) == 1 && length(lower) == 1 && length(upper) == 1 && length(confidence_level) == 1) {
+        if (!is.na(sigma) && is.na(confidence_level)) {
+          confidence_level <- 2 * pnorm(sigma / 2) - 1
+        }
+        if (mode > lower && mode < upper) {
+          if (confidence_level > 0 && confidence_level < 1) {
+            params <- .beta_parameters_within(mode, lower, upper, confidence_level)
+          } else {
+            invisible(NULL)
+            stop("confidence_level must be between 0 and 1.")
+          }
+        } else {
+          invisible(NULL)
+          stop("\'mode\' must be greater than \'lower\' and less than \'upper\'.")
+        }
+      } else {
+        invisible(NULL)
+        stop("Arguments must be supplied as singular values; I cannot accept vectors with length > 1.")
+      }
+    } else {
       invisible(NULL)
       stop("Arguments \'n,\' \'mode,\' \'lower,\' \'upper,\' and \'confidence_level\' must be numeric")
     }
   } else {
-    if (!missing(n) & !missing(mode)){
+    if (!missing(n) && !missing(mode)) {
       #k <- 1 / (1 - confidence_level) # <-- NEEDS TESTING TO MATCH .beta_shapes() CALCULATION TO CONFIDENCE LEVEL
       #params <- betaShapes(mode, k)
       invisible(NULL)
@@ -85,23 +100,28 @@ rbeta_within <- function(n, mode, lower, upper, confidence_level = 0.9, sigma = 
 #' rbeta_between(10, 10, 5, 20)
 #' summary(rbeta_between(1000, 10, 5, 20))
 #' }
-rbeta_between <- function(n, mode, minimum = 0, maximum = 1) {
-  if (!missing(n) & !missing(mode)) {
-    if (mode > minimum & mode < maximum) {
-      if (is.numeric(n) & is.numeric(mode) & is.numeric(minimum) & is.numeric(maximum) &
-          !is.nan(n) & !is.nan(mode) & !is.nan(minimum) & !is.nan(maximum)) {
-        params <- .beta_parameters_between(mode = mode, lower = minimum, upper = maximum)
+rbeta_between <- function(n, mode = 0.3, minimum = 0, maximum = 1) {
+  if (!missing(n) && !missing(mode)) {
+    if (is.numeric(n) && is.numeric(mode) && is.numeric(minimum) && is.numeric(maximum) &
+        !all(is.nan(n)) && !all(is.nan(mode)) && !all(is.nan(minimum)) && !all(is.nan(maximum))) {
+      if (length(n) == 1 && length(mode) == 1 && length(minimum) == 1 && length(maximum) == 1) {
+        if (mode > minimum && mode < maximum) {
+          params <- .beta_parameters_between(mode = mode, lower = minimum, upper = maximum)
+        } else {
+          invisible(NULL)
+          stop("\'mode\' must be greater than \'minimum\' and less than \'maximum\'.")
+        }
       } else {
         invisible(NULL)
-        stop("Arguments \'n,\' \'mode,\' \'minimum\' and \'maximum\' must be numeric.")
+        stop("Arguments must be supplied as singular values; I cannot accept vectors with length > 1.")
       }
     } else {
       invisible(NULL)
-      stop("\'mode\' must be between \'minimum\' and \'maximum\'")
+      stop("Arguments \'n,\' \'mode,\' \'minimum\' and \'maximum\' must be numeric.")
     }
   } else {
     invisible(NULL)
-    stop("rbeta_between() requires the number, \'n\' and \'mode.\'")
+    stop("rbeta_between() requires you supply at least \'n\' and \'mode\' as arguments.")
   }
   result <- rbeta(n, shape1 = params[["shape1"]], shape2 = params[["shape2"]])
   result <- result * (maximum - minimum) + minimum
